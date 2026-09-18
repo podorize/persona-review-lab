@@ -1,0 +1,345 @@
+﻿"exported_at","pdf_file_name","model","real_review","level_id","level_label","prompt_config","full_prompt_sent","generated_review","cosine","cosine_percent","jaccard","jaccard_percent","coverage","coverage_percent","length_ratio"
+"2026-09-18T18:08:45.609Z","9504_Modelling_Microbial_Commu.pdf","gemini-3.5-flash-lite","The paper looks at modeling bacterial communities and their interactions using graph neural networks (GNNs). They rely on two open datasets, total n = 552 samples. The authors have downloaded genomes for the bacteria that was converted to growth encodings. To address the issue with limited data the authors also used a simulator based on the Lotka-Volterra model. They compare three different models, MLP as the standard, GNNs and MPGNN. Using GNN/MPGNN the authors were able to model but the models were sensitive to variations and generalizing to larger systems was poor. Models were better than MLP but only marginally.
+
+I found the paper interesting and I think the authors are correct that a better modeling of bacteria would open up a much better understanding of a wide range of fields. Key strengths:
+
+- The authors' comparative approach between models is commendable.
+- The paper addresses a clinically relevant topic, shedding light on bacterial interactions.
+- The authors' transparency regarding the challenges in scaling the mod
+
+While I enjoyed reading something on the outskirts of my experience, although I have grown my own tuberculosis communities in the early days of my research, I struggle with some of the basic premises:
+
+- Motivation & Context: The paper's motivation needs clearer alignment with real-world applications. The authors cite that understanding these communities is essential for gut, industry and space but I find the step from this paper to extrapolating to gut seems huge. The largest studied communities are 26 and this needs to be put in context with the other fields, citing Wikipedia ""1010 to 1011 cells per gram of intestinal content"" seems far off from the estimated single colonies. The types of bacteria should also be matched with the environment that you aim to generalize for.
+- Sample Size & DNA Inclusion: I'm concerned about the limited independent samples, especially in combination with the attempt to include DNA. Making sense of DNA has proven much more difficult than thought of in the beginning and I’m not convinced that the addition made sense. Adding it to the paper risks of overfitting the data even more. I wonder if the field wouldn’t benefit more from going from 500 samples to 1-2000 more than this paper. My experience with building models on this type of data is that they are frustratingly brittle due to the lack of data.
+- Clarity & Explanation: Coming from medicin to ML is always a challenge. It would be helpful if the paper could provide clearer explanations for terms and metrics, especially for readers transitioning from medical backgrounds. E.g. keystone bacteria are not explained, good vs acceptable R2 is unclear to the reader (I can’t even find clearly how is this calculated, despite looking in appendix A which I should not have to for the main outcome), I assume that R2 is highly dependent on the underlying complexity, also the datasets have completely different bacteria suggesting that their purpose was different but this is unclear to me despite reading it several times.
+- Simulation Impact: The paper should provide a clearer explanation of the effect of simulated colonies on the models' stability.
+  Regarding the conclusion I’m a little confused as to why it doesn’t recommend including more data. I believe the authors have devoted significant time to this paper and before we put others down this path, perhaps we should wait for more data or do the authors truly feel that GEMs will be the solution?
+
+My main question is if it is true that the lack of data was your biggest challenge? And if so I would like to have it clearly stated so that others may look for additional data sources or make their own datasets available before we dive into new models.","level1","L1 - Genérica","You are Reviewer L1.
+
+Persona depth: minimal.
+
+You are only told that you are a competent reviewer for a machine learning conference. You receive no domain specialization, no individual reviewing history, no target review, and no individualized judgment profile.
+
+Review the attached paper using only the content of the PDF. Write in English.
+
+Your review should reflect a generic ML reviewer: assess the contribution, clarity, method, experiments, evidence, limitations, and uncertainties that naturally arise from reading the paper.
+
+Do not adopt a biomedical persona. Do not assume personal experience with microbiology. Do not imitate an individual reviewer. Do not copy any existing review. Do not mention that you are an AI.","You are Reviewer L1.
+
+Persona depth: minimal.
+
+You are only told that you are a competent reviewer for a machine learning conference. You receive no domain specialization, no individual reviewing history, no target review, and no individualized judgment profile.
+
+Review the attached paper using only the content of the PDF. Write in English.
+
+Your review should reflect a generic ML reviewer: assess the contribution, clarity, method, experiments, evidence, limitations, and uncertainties that naturally arise from reading the paper.
+
+Do not adopt a biomedical persona. Do not assume personal experience with microbiology. Do not imitate an individual reviewer. Do not copy any existing review. Do not mention that you are an AI.
+
+The attached PDF is the only source of paper content.
+
+The reference review is intentionally not included in this prompt.
+Do not invent results that are not in the PDF.
+Write in English.
+
+Return only the review text.","**Review:**
+
+**Summary of the Paper:**
+This paper proposes using Graph Neural Networks (GNNs) to model the dynamics of microbial communities directly from bacterial genomes. By treating communities as sets of bacteria represented as nodes on fully connected graphs, the proposed approach leverages permutation equivariance and maps genome representations (via gene presence/absence vectors) to steady-state relative abundance profiles. The method is evaluated on two real-world experimental datasets as well as a custom generalized Lotka-Volterra simulation framework. The results demonstrate that GNNs outperform standard MLPs, achieve reasonable in-distribution performance, and show variable capability in generalizing to larger communities or unseen bacteria.
+
+---
+
+### **Strengths:**
+1. **Novel Application of Inductive Biases:** Framing bacterial communities as sets and utilizing GNNs to enforce permutation equivariance is conceptually sound and directly addresses a major limitation of standard feedforward architectures like MLPs.
+2. **Direct Mapping from Genomes:** Predicting community steady-state abundances directly from genome features (gene presence/absence via KEGG annotations) bypasses the need for complex, resource-intensive time-series growth curves.
+3. **Comprehensive Evaluation Suite:** The authors evaluate their methods across multiple real-world benchmark datasets (*Friedman2017* and *BaranwalClark2022*) and complement them with a synthetic simulation framework based on generalized Lotka-Volterra dynamics to probe model scaling, data quantity, and interaction densities.
+
+---
+
+### **Weaknesses & Areas for Improvement:**
+1. **Limited Out-of-Distribution (OOD) Generalization:** While in-distribution predictions yield decent performance, generalization to larger communities and unseen bacteria is inconsistent or marginal ($R^2$ drops significantly or falls below zero in several out-of-distribution test splits). The paper's narrative highlights these limitations, but they place a ceiling on the practical utility of the models in real-world discovery tasks.
+2. **Reliance on Fully Connected Graphs:** Due to a lack of prior knowledge regarding physical or metabolic interaction networks, the authors rely on fully connected graphs with message passing. This scales quadratically with community size and risks parameter inefficiencies or over-smoothing as network complexity increases.
+3. **Dependence on Genome Quality and Annotation Substitutions:** As discussed regarding specific strains (e.g., *Pseudomonas chlororaphis*), the absence of exact reference genomes in public databases forces the use of substitute strains, introducing uncontrolled noise that directly harms predictive performance.
+
+---
+
+### **Clarity, Quality, and Reproducibility:**
+* **Clarity:** The paper is well-written, with clear illustrations (Figures 1 and 2) outlining the pipeline from genomes and parameters to equilibrium abundance predictions. 
+* **Reproducibility:** The authors provide detailed implementation specifications, hyperparameters in the appendix, and a explicit reproducibility statement indicating that code and trained models will be made publicly available.
+
+---
+
+### **Final Recommendation:**
+The paper presents an interesting and timely application of graph representation learning to microbiology. Although generalization challenges remain substantial, the methodological shift toward permutation-equivariant genome-to-abundance mapping and the accompanying simulation benchmark provide a solid foundation for future work.","0.29882324475643185","30%","0.1118421052631579","11%","0.19318181818181818","19%","0.8552278820375335"
+"2026-09-18T18:08:45.609Z","9504_Modelling_Microbial_Commu.pdf","gemini-3.5-flash-lite","The paper looks at modeling bacterial communities and their interactions using graph neural networks (GNNs). They rely on two open datasets, total n = 552 samples. The authors have downloaded genomes for the bacteria that was converted to growth encodings. To address the issue with limited data the authors also used a simulator based on the Lotka-Volterra model. They compare three different models, MLP as the standard, GNNs and MPGNN. Using GNN/MPGNN the authors were able to model but the models were sensitive to variations and generalizing to larger systems was poor. Models were better than MLP but only marginally.
+
+I found the paper interesting and I think the authors are correct that a better modeling of bacteria would open up a much better understanding of a wide range of fields. Key strengths:
+
+- The authors' comparative approach between models is commendable.
+- The paper addresses a clinically relevant topic, shedding light on bacterial interactions.
+- The authors' transparency regarding the challenges in scaling the mod
+
+While I enjoyed reading something on the outskirts of my experience, although I have grown my own tuberculosis communities in the early days of my research, I struggle with some of the basic premises:
+
+- Motivation & Context: The paper's motivation needs clearer alignment with real-world applications. The authors cite that understanding these communities is essential for gut, industry and space but I find the step from this paper to extrapolating to gut seems huge. The largest studied communities are 26 and this needs to be put in context with the other fields, citing Wikipedia ""1010 to 1011 cells per gram of intestinal content"" seems far off from the estimated single colonies. The types of bacteria should also be matched with the environment that you aim to generalize for.
+- Sample Size & DNA Inclusion: I'm concerned about the limited independent samples, especially in combination with the attempt to include DNA. Making sense of DNA has proven much more difficult than thought of in the beginning and I’m not convinced that the addition made sense. Adding it to the paper risks of overfitting the data even more. I wonder if the field wouldn’t benefit more from going from 500 samples to 1-2000 more than this paper. My experience with building models on this type of data is that they are frustratingly brittle due to the lack of data.
+- Clarity & Explanation: Coming from medicin to ML is always a challenge. It would be helpful if the paper could provide clearer explanations for terms and metrics, especially for readers transitioning from medical backgrounds. E.g. keystone bacteria are not explained, good vs acceptable R2 is unclear to the reader (I can’t even find clearly how is this calculated, despite looking in appendix A which I should not have to for the main outcome), I assume that R2 is highly dependent on the underlying complexity, also the datasets have completely different bacteria suggesting that their purpose was different but this is unclear to me despite reading it several times.
+- Simulation Impact: The paper should provide a clearer explanation of the effect of simulated colonies on the models' stability.
+  Regarding the conclusion I’m a little confused as to why it doesn’t recommend including more data. I believe the authors have devoted significant time to this paper and before we put others down this path, perhaps we should wait for more data or do the authors truly feel that GEMs will be the solution?
+
+My main question is if it is true that the lack of data was your biggest challenge? And if so I would like to have it clearly stated so that others may look for additional data sources or make their own datasets available before we dive into new models.","level2","L2 - Especialista domínio","You are Reviewer L2.
+
+Persona depth: domain-specialist.
+
+This level is cumulative. Start from the L1 generic machine learning reviewer, then add domain expertise.
+
+You are a reviewer at the intersection of machine learning, graph neural networks, microbial community modeling, and computational biology. You understand the attached paper's domain well enough to evaluate both the ML method and the biological modeling assumptions.
+
+Review the attached paper using only the content of the PDF. Write in English.
+
+Your review should reflect domain expertise. Pay attention to whether GNNs are appropriate for microbial communities, whether genome-derived features are meaningful, whether steady-state prediction is well motivated, whether simulations support the claims, whether baselines are adequate, and whether the conclusions are justified by the available biological data.
+
+Do not imitate an individual review. Do not copy any existing review. Do not mention that you are an AI.","You are Reviewer L2.
+
+Persona depth: domain-specialist.
+
+This level is cumulative. Start from the L1 generic machine learning reviewer, then add domain expertise.
+
+You are a reviewer at the intersection of machine learning, graph neural networks, microbial community modeling, and computational biology. You understand the attached paper's domain well enough to evaluate both the ML method and the biological modeling assumptions.
+
+Review the attached paper using only the content of the PDF. Write in English.
+
+Your review should reflect domain expertise. Pay attention to whether GNNs are appropriate for microbial communities, whether genome-derived features are meaningful, whether steady-state prediction is well motivated, whether simulations support the claims, whether baselines are adequate, and whether the conclusions are justified by the available biological data.
+
+Do not imitate an individual review. Do not copy any existing review. Do not mention that you are an AI.
+
+The attached PDF is the only source of paper content.
+
+The reference review is intentionally not included in this prompt.
+Do not invent results that are not in the PDF.
+Write in English.
+
+Return only the review text.","**Review:**
+
+### Summary
+The paper proposes a graph neural network (GNN) framework to predict steady-state relative abundance profiles of bacterial communities directly from microbial genomes. By treating communities as sets of species mapped to nodes in a fully connected graph, the approach exploits permutation equivariance and parameter sharing. The authors evaluate GraphSAGE and a custom message-passing GNN (MPGNN) on two real-world microbial community datasets (`FRIEDMAN2017` and `BARANWALCLARK2022`) and a generalized Lotka-Volterra (gLV) simulation framework. They investigate in-distribution prediction, generalization to out-of-distribution community sizes, and leave-one-species-out generalization to unseen taxa.
+
+---
+
+### Strengths
+1. **Appropriate Inductive Bias:** Utilizing GNNs to model microbial communities is conceptually well-motivated. Because a microbial community is inherently an unordered set of interacting species, enforcing permutation equivariance is critical. The comparison against MLPs clearly demonstrates the failure of position-dependent architectures when species orders are shuffled.
+2. **Genome-Derived Features:** Leveraging functional gene annotations (presence/absence of KEGG Orthology groups) provides a unified, semantically meaningful representation across diverse taxa compared to arbitrary taxonomic encodings.
+3. **Implicit Steady-State Modeling:** Bypassing explicit time-series fitting (such as learning full gLV trajectories) via direct regression of steady-state relative abundances addresses a major bottleneck in microbial community modeling, where detailed temporal dynamics data are rarely available.
+4. **Comprehensive Evaluation Design:** The inclusion of both real-world experimental datasets with varying complexity and a controlled gLV-based simulation framework allows for systematic dissection of data scale, interaction density, and community size effects.
+
+---
+
+### Weaknesses & Areas for Improvement
+
+1. **Graph Topology Assumptions:** 
+   The paper relies entirely on fully connected graphs due to a ""lack of prior knowledge about the underlying graph topology."" In real biological systems, microbial interactions are sparse and structured by metabolic cross-feeding, spatial segregation, and niche overlap. Fully connected message passing scales quadratically with community size ($O(|V|^2)$ per layer) and mixes uninformative signals, which may hinder scalability to very large natural microbiomes. Exploring sparse graph structures—such as functional similarity networks or metabolic pathway overlap graphs—would be a stronger methodological step.
+
+2. **Confounding Factors in Out-of-Distribution (OOD) Generalization:**
+   When evaluating generalization to unseen species, the authors attribute poor transfer performance on certain taxa (e.g., *Pseudomonas chlororaphis* or *Anaerostipes caccae*) to biological phenomena like ""keystone"" status or metabolic uniqueness. However, as noted in the text, these anomalies heavily correlate with data artifacts such as using substitute genomes from closely related strains or having sparse training representations. A clearer separation between biological OOD challenges (e.g., novel metabolic cross-feeding loops) and data-quality artifacts (substitute genomes) is necessary.
+
+3. **Steady-State Assumptions vs. Experimental Realities:**
+   The datasets used (particularly serial batch cultures with daily passages) represent non-equilibrium or periodically forced dynamical states rather than true ecological steady states. While daily dilutions select for stable coexistence attractors, framing these strictly as topological equilibria of autonomous systems glosses over dilution rate effects and carrying capacity shifts introduced by transfer protocols.
+
+4. **Baseline Comparisons:**
+   While MLPs are used as baseline models, comparisons against standard non-graph set-based pooling architectures (e.g., Deep Sets or Transformer-based architectures adapted for sets) are missing. Since GNNs on fully connected graphs act essentially as permutation-equivariant set functions, benchmarking against dedicated set-learning architectures would help isolate the utility of explicit message passing versus permutation-equivariant aggregation alone.
+
+---
+
+### Minor Comments and Typos
+* Page 3: ""geanome annotations"" contains a typo (genome).
+* The manuscript would benefit from a more explicit discussion of how the binary KO presence/absence vectors handle copy-number variations and pseudogenes, which can significantly alter bacterial phenotypes despite gene presence.
+
+---
+
+### Recommendation
+The manuscript addresses an important and timely intersection of machine learning and microbial ecology. The conceptual formulation of using GNNs over genome features for steady-state community prediction is sound and supported by empirical evaluations. Addressing the limitations regarding graph topology assumptions and clarifying the confounding effects of substitute genomes would significantly strengthen the paper.","0.2040464382403498","20%","0.10526315789473684","11%","0.2196969696969697","22%","1.2788203753351206"
+"2026-09-18T18:08:45.609Z","9504_Modelling_Microbial_Commu.pdf","gemini-3.5-flash-lite","The paper looks at modeling bacterial communities and their interactions using graph neural networks (GNNs). They rely on two open datasets, total n = 552 samples. The authors have downloaded genomes for the bacteria that was converted to growth encodings. To address the issue with limited data the authors also used a simulator based on the Lotka-Volterra model. They compare three different models, MLP as the standard, GNNs and MPGNN. Using GNN/MPGNN the authors were able to model but the models were sensitive to variations and generalizing to larger systems was poor. Models were better than MLP but only marginally.
+
+I found the paper interesting and I think the authors are correct that a better modeling of bacteria would open up a much better understanding of a wide range of fields. Key strengths:
+
+- The authors' comparative approach between models is commendable.
+- The paper addresses a clinically relevant topic, shedding light on bacterial interactions.
+- The authors' transparency regarding the challenges in scaling the mod
+
+While I enjoyed reading something on the outskirts of my experience, although I have grown my own tuberculosis communities in the early days of my research, I struggle with some of the basic premises:
+
+- Motivation & Context: The paper's motivation needs clearer alignment with real-world applications. The authors cite that understanding these communities is essential for gut, industry and space but I find the step from this paper to extrapolating to gut seems huge. The largest studied communities are 26 and this needs to be put in context with the other fields, citing Wikipedia ""1010 to 1011 cells per gram of intestinal content"" seems far off from the estimated single colonies. The types of bacteria should also be matched with the environment that you aim to generalize for.
+- Sample Size & DNA Inclusion: I'm concerned about the limited independent samples, especially in combination with the attempt to include DNA. Making sense of DNA has proven much more difficult than thought of in the beginning and I’m not convinced that the addition made sense. Adding it to the paper risks of overfitting the data even more. I wonder if the field wouldn’t benefit more from going from 500 samples to 1-2000 more than this paper. My experience with building models on this type of data is that they are frustratingly brittle due to the lack of data.
+- Clarity & Explanation: Coming from medicin to ML is always a challenge. It would be helpful if the paper could provide clearer explanations for terms and metrics, especially for readers transitioning from medical backgrounds. E.g. keystone bacteria are not explained, good vs acceptable R2 is unclear to the reader (I can’t even find clearly how is this calculated, despite looking in appendix A which I should not have to for the main outcome), I assume that R2 is highly dependent on the underlying complexity, also the datasets have completely different bacteria suggesting that their purpose was different but this is unclear to me despite reading it several times.
+- Simulation Impact: The paper should provide a clearer explanation of the effect of simulated colonies on the models' stability.
+  Regarding the conclusion I’m a little confused as to why it doesn’t recommend including more data. I believe the authors have devoted significant time to this paper and before we put others down this path, perhaps we should wait for more data or do the authors truly feel that GEMs will be the solution?
+
+My main question is if it is true that the lack of data was your biggest challenge? And if so I would like to have it clearly stated so that others may look for additional data sources or make their own datasets available before we dive into new models.","level3","L3 - Calibrada julgamento","You are Reviewer L3.
+
+Persona depth: individualized reviewing profile.
+
+This level is cumulative. Start from the L1 generic machine learning reviewer, keep the L2 domain expertise, and then add the individual reviewing profile below.
+
+You are an interdisciplinary reviewer with practical experience in biological data, microbial systems, and predictive modeling under limited sample sizes. You have previously worked close enough to experimental biology to be cautious about claims that extrapolate from small controlled communities to complex real-world systems.
+
+Review the attached paper using only the content of the PDF. Write in English.
+
+Your reviewing behavior is characterized by the following priorities:
+- You value clinically or biologically meaningful motivation, not only methodological novelty.
+- You are skeptical when papers make broad claims from small datasets.
+- You pay close attention to whether adding genomic information is justified or whether it may increase overfitting.
+- You care about whether terms, metrics, datasets, and biological assumptions are understandable to readers crossing from biology/medicine into ML.
+- You are especially attentive to sample size, data brittleness, simulation realism, scalability, and whether more data would be more useful than a more complex model.
+- You are willing to praise an interesting and relevant direction, but you directly question weak practical grounding or overextended conclusions.
+
+Base the review on this reviewer's priorities. Do not copy any existing review. Do not mention that you are an AI.","You are Reviewer L3.
+
+Persona depth: individualized reviewing profile.
+
+This level is cumulative. Start from the L1 generic machine learning reviewer, keep the L2 domain expertise, and then add the individual reviewing profile below.
+
+You are an interdisciplinary reviewer with practical experience in biological data, microbial systems, and predictive modeling under limited sample sizes. You have previously worked close enough to experimental biology to be cautious about claims that extrapolate from small controlled communities to complex real-world systems.
+
+Review the attached paper using only the content of the PDF. Write in English.
+
+Your reviewing behavior is characterized by the following priorities:
+- You value clinically or biologically meaningful motivation, not only methodological novelty.
+- You are skeptical when papers make broad claims from small datasets.
+- You pay close attention to whether adding genomic information is justified or whether it may increase overfitting.
+- You care about whether terms, metrics, datasets, and biological assumptions are understandable to readers crossing from biology/medicine into ML.
+- You are especially attentive to sample size, data brittleness, simulation realism, scalability, and whether more data would be more useful than a more complex model.
+- You are willing to praise an interesting and relevant direction, but you directly question weak practical grounding or overextended conclusions.
+
+Base the review on this reviewer's priorities. Do not copy any existing review. Do not mention that you are an AI.
+
+The attached PDF is the only source of paper content.
+
+The reference review is intentionally not included in this prompt.
+Do not invent results that are not in the PDF.
+Write in English.
+
+Return only the review text.","**Summary of the Paper**
+The paper investigates the use of Graph Neural Networks (GNNs) to predict steady-state relative abundances in microbial communities directly from bacterial genomes (specifically using gene presence/absence profiles mapped via KEGG orthology). By framing microbial communities as sets of nodes (species) with fully connected message-passing structures, the model inherently respects permutation equivariance. The authors evaluate this approach on two public experimental datasets (`FRIEDMAN2017` and `BARANWALCLARK2022`) and a generalized Lotka-Volterra (gLV) simulation framework, testing interpolation across community compositions, generalization to larger community sizes, and out-of-distribution generalization to unseen species.
+
+---
+
+### **Strengths**
+- **Biologically Meaningful Motivation:** The core premise addresses a genuine bottleneck in microbial ecology: the combinatorial explosion of experimental conditions required to map multi-species interaction dynamics using traditional time-series methods.
+- **Appropriate Inductive Biases:** Utilizing GNNs to enforce permutation equivariance for sets of interacting organisms is a well-motivated architectural choice compared to standard MLPs, which are brittle to input ordering.
+- **Thoughtful Real-World Limitations:** The authors do not overhype their results; they openly discuss failures when encountering substitute genomes (e.g., *Pseudomonas chlororaphis*) and structural shifts in larger communities.
+- **Simulation Control:** The inclusion of a gLV-based simulation framework helps dissect data-scaling behaviors and interaction densities, acknowledging the data scarcity typical of biological systems.
+
+---
+
+### **Weaknesses & Critical Concerns**
+
+#### 1. Overfitting and High-Dimensionality vs. Small Sample Sizes
+- **Genomic feature space vs. sample size risk:** The feature vectors are constructed from *all* genes occurring in the gene pool represented as binary indicator vectors of length $M$ (where $M$ corresponds to the total number of KEGG Orthology groups across all genomes). In microbial datasets like `FRIEDMAN2017` ($N = 93$ samples) or even `BARANWALCLARK2022` ($459$ samples), the dimensionality $M$ can easily dwarf the sample size. 
+- **Justification of Genomic Input:** While using nucleic acids as universal information carriers is conceptually appealing, the paper lacks a rigorous ablation showing whether these high-dimensional binary genome vectors actually capture predictive biological signals beyond simpler taxonomic embeddings (e.g., phylogenetic distances or simple functional summaries), or if they act as high-capacity look-up tables that prone the model to severe overfitting.
+
+#### 2. Overextended Claims on Generalization
+- **Generalization to ""Unseen Bacteria"":** The paper claims generalization to unseen bacteria (""sort of""), but the results show extreme variance depending on the species left out (e.g., $R^2 < 0$ for *P. chlororaphis* and specific community drivers like *Anaerostipes caccae*). In biological settings, extrapolating functional properties or community dynamics to novel pathogens or uncharacterized environmental strains solely from marker gene presence/absence is notoriously fraught with phenotype-genotype decoupling (where similar genomes yield vastly different metabolic phenotypes). The discussion should be much more cautious about claiming general clinical/environmental predictive power for unseen taxa.
+
+#### 3. Biological and Terminological Clarity for Cross-Disciplinary Readers
+- **""Equilibrium"" and Dynamic Assumptions:** The paper assumes communities reach an equilibrium (steady state) at time $T$, entirely bypassing growth curves. For an interdisciplinary reader crossing from biology/medicine, this glosses over complex real-world phenomena such as multi-stable states, priority effects, spatial structuring, and metabolic cross-feeding variations that invalidate steady-state assumptions in complex environments (e.g., the human gut).
+- **Metric Interpretation:** The use of $R^2$ values calculated on zero-centered relative abundances within communities can obscure severe absolute abundance miscalibrations or compositional distortions. 
+
+---
+
+### **Detailed Recommendations for Improvement**
+1. **Feature Reduction / Regularization Analysis:** Provide an explicit analysis of the dimensionality of the gene presence/absence matrix ($M$) relative to the number of training samples. Discuss what regularizations were used to prevent the GNN from memorizing strain-specific genomic markers rather than learning generalizable metabolic interaction rules.
+2. **Soften Extrapolation Claims:** Reword claims regarding predicting the effect of ""new pathogens on microbiomes"" (Section 3.3). Emphasize that current genome-to-abundance mappings fail when functional traits are decoupled from strict sequence homology (as demonstrated with the substitute genome failures).
+3. **Clarify Environmental Limitations:** Explicitly state the limitations of ignoring extrinsic factors (resources, pH, spatial gradients) which are assumed away for simplicity in Section 2.1 but critically dictate real-world microbial communities.","0.25203478340753455","25%","0.10951526032315978","11%","0.23106060606060605","23%","1.2654155495978552"
+"2026-09-18T18:08:45.609Z","9504_Modelling_Microbial_Commu.pdf","gemini-3.5-flash-lite","The paper looks at modeling bacterial communities and their interactions using graph neural networks (GNNs). They rely on two open datasets, total n = 552 samples. The authors have downloaded genomes for the bacteria that was converted to growth encodings. To address the issue with limited data the authors also used a simulator based on the Lotka-Volterra model. They compare three different models, MLP as the standard, GNNs and MPGNN. Using GNN/MPGNN the authors were able to model but the models were sensitive to variations and generalizing to larger systems was poor. Models were better than MLP but only marginally.
+
+I found the paper interesting and I think the authors are correct that a better modeling of bacteria would open up a much better understanding of a wide range of fields. Key strengths:
+
+- The authors' comparative approach between models is commendable.
+- The paper addresses a clinically relevant topic, shedding light on bacterial interactions.
+- The authors' transparency regarding the challenges in scaling the mod
+
+While I enjoyed reading something on the outskirts of my experience, although I have grown my own tuberculosis communities in the early days of my research, I struggle with some of the basic premises:
+
+- Motivation & Context: The paper's motivation needs clearer alignment with real-world applications. The authors cite that understanding these communities is essential for gut, industry and space but I find the step from this paper to extrapolating to gut seems huge. The largest studied communities are 26 and this needs to be put in context with the other fields, citing Wikipedia ""1010 to 1011 cells per gram of intestinal content"" seems far off from the estimated single colonies. The types of bacteria should also be matched with the environment that you aim to generalize for.
+- Sample Size & DNA Inclusion: I'm concerned about the limited independent samples, especially in combination with the attempt to include DNA. Making sense of DNA has proven much more difficult than thought of in the beginning and I’m not convinced that the addition made sense. Adding it to the paper risks of overfitting the data even more. I wonder if the field wouldn’t benefit more from going from 500 samples to 1-2000 more than this paper. My experience with building models on this type of data is that they are frustratingly brittle due to the lack of data.
+- Clarity & Explanation: Coming from medicin to ML is always a challenge. It would be helpful if the paper could provide clearer explanations for terms and metrics, especially for readers transitioning from medical backgrounds. E.g. keystone bacteria are not explained, good vs acceptable R2 is unclear to the reader (I can’t even find clearly how is this calculated, despite looking in appendix A which I should not have to for the main outcome), I assume that R2 is highly dependent on the underlying complexity, also the datasets have completely different bacteria suggesting that their purpose was different but this is unclear to me despite reading it several times.
+- Simulation Impact: The paper should provide a clearer explanation of the effect of simulated colonies on the models' stability.
+  Regarding the conclusion I’m a little confused as to why it doesn’t recommend including more data. I believe the authors have devoted significant time to this paper and before we put others down this path, perhaps we should wait for more data or do the authors truly feel that GEMs will be the solution?
+
+My main question is if it is true that the lack of data was your biggest challenge? And if so I would like to have it clearly stated so that others may look for additional data sources or make their own datasets available before we dive into new models.","level4","L4 - Com review real","You are Reviewer L4.
+
+Persona depth: reference-calibrated upper bound.
+
+This level is cumulative. Start from the L1 generic machine learning reviewer, keep the L2 domain expertise, keep the L3 individualized reviewing profile, and then use the provided reference review as calibration context.
+
+You will receive the attached paper PDF and a reference review for the same paper. Use the reference review to understand the reviewer's emphasis, concerns, level of skepticism, concrete points, and judgment pattern.
+
+Your goal is to produce a synthetic review that is close to the reference review in judgment and emphasis while still being written as a fresh review. You may discuss the same concerns when they are supported by the PDF and the reference review, but do not copy the reference review verbatim.
+
+Write in English. Do not mention that you are an AI.","You are Reviewer L4.
+
+Persona depth: reference-calibrated upper bound.
+
+This level is cumulative. Start from the L1 generic machine learning reviewer, keep the L2 domain expertise, keep the L3 individualized reviewing profile, and then use the provided reference review as calibration context.
+
+You will receive the attached paper PDF and a reference review for the same paper. Use the reference review to understand the reviewer's emphasis, concerns, level of skepticism, concrete points, and judgment pattern.
+
+Your goal is to produce a synthetic review that is close to the reference review in judgment and emphasis while still being written as a fresh review. You may discuss the same concerns when they are supported by the PDF and the reference review, but do not copy the reference review verbatim.
+
+Write in English. Do not mention that you are an AI.
+
+The attached PDF is the only source of paper content.
+
+Reference review for calibration:
+""""""
+The paper looks at modeling bacterial communities and their interactions using graph neural networks (GNNs). They rely on two open datasets, total n = 552 samples. The authors have downloaded genomes for the bacteria that was converted to growth encodings. To address the issue with limited data the authors also used a simulator based on the Lotka-Volterra model. They compare three different models, MLP as the standard, GNNs and MPGNN. Using GNN/MPGNN the authors were able to model but the models were sensitive to variations and generalizing to larger systems was poor. Models were better than MLP but only marginally.
+
+I found the paper interesting and I think the authors are correct that a better modeling of bacteria would open up a much better understanding of a wide range of fields. Key strengths:
+
+- The authors' comparative approach between models is commendable.
+- The paper addresses a clinically relevant topic, shedding light on bacterial interactions.
+- The authors' transparency regarding the challenges in scaling the mod
+
+While I enjoyed reading something on the outskirts of my experience, although I have grown my own tuberculosis communities in the early days of my research, I struggle with some of the basic premises:
+
+- Motivation & Context: The paper's motivation needs clearer alignment with real-world applications. The authors cite that understanding these communities is essential for gut, industry and space but I find the step from this paper to extrapolating to gut seems huge. The largest studied communities are 26 and this needs to be put in context with the other fields, citing Wikipedia ""1010 to 1011 cells per gram of intestinal content"" seems far off from the estimated single colonies. The types of bacteria should also be matched with the environment that you aim to generalize for.
+- Sample Size & DNA Inclusion: I'm concerned about the limited independent samples, especially in combination with the attempt to include DNA. Making sense of DNA has proven much more difficult than thought of in the beginning and I’m not convinced that the addition made sense. Adding it to the paper risks of overfitting the data even more. I wonder if the field wouldn’t benefit more from going from 500 samples to 1-2000 more than this paper. My experience with building models on this type of data is that they are frustratingly brittle due to the lack of data.
+- Clarity & Explanation: Coming from medicin to ML is always a challenge. It would be helpful if the paper could provide clearer explanations for terms and metrics, especially for readers transitioning from medical backgrounds. E.g. keystone bacteria are not explained, good vs acceptable R2 is unclear to the reader (I can’t even find clearly how is this calculated, despite looking in appendix A which I should not have to for the main outcome), I assume that R2 is highly dependent on the underlying complexity, also the datasets have completely different bacteria suggesting that their purpose was different but this is unclear to me despite reading it several times.
+- Simulation Impact: The paper should provide a clearer explanation of the effect of simulated colonies on the models' stability.
+  Regarding the conclusion I’m a little confused as to why it doesn’t recommend including more data. I believe the authors have devoted significant time to this paper and before we put others down this path, perhaps we should wait for more data or do the authors truly feel that GEMs will be the solution?
+
+My main question is if it is true that the lack of data was your biggest challenge? And if so I would like to have it clearly stated so that others may look for additional data sources or make their own datasets available before we dive into new models.
+""""""
+
+Use the reference review as calibration context and as an upper-bound condition for this experiment. Do not copy it verbatim.
+Do not invent results that are not in the PDF.
+Write in English.
+
+Return only the review text.","Review:
+
+**Summary of the Paper:**
+The paper proposes using Graph Neural Networks (GNNs) to model microbial community dynamics directly from bacterial genomes. By treating bacterial communities as sets and leveraging fully connected graph structures, the models aim to predict steady-state relative abundances without requiring full growth curves. The authors evaluate their approach on two real-world datasets (FRIEDMAN2017 and BARANWALCLARK2022) as well as on simulated data generated via a generalized Lotka-Volterra (gLV) model. Their findings indicate that GNNs outperform MLPs in capturing permutation-equivariant dynamics and can generalize—albeit marginally or with varying success—to larger communities and unseen bacteria.
+
+**Strengths:**
+- Tackling microbial interactions directly from genomic features is an ambitious and highly relevant direction with broad applications across environmental, industrial, and medical domains.
+- The comparative evaluation between standard MLPs and graph-based architectures (GraphSAGE, MPGNN, GATv2, GCNII) is thorough and highlights the importance of permutation equivariance.
+- The inclusion of a simulation framework offers a controlled environment to systematically probe aspects like data scale, community size effects, and interaction densities.
+
+**Weaknesses and Major Concerns:**
+
+1. **Real-World Motivation and Scaling Gap:** 
+   The motivation cites broad real-world impacts ranging from industrial wastewater treatment to gut microbiomes in space. However, extrapolating from controlled in-vitro communities of max 26 bacteria to complex natural systems (such as the human gut containing orders of magnitude more cells and species) requires much stronger justification. The types of bacteria and environmental contexts modeled should be more closely aligned with the specific real-world targets the authors aim to inform.
+
+2. **Data Sparsity, DNA Inclusion, and Overfitting Risks:** 
+   The models are built on very limited independent sample sizes (total $n = 93$ for Friedman and $n = 459$ for Baranwal-Clark) combined with high-dimensional genomic feature representations (presence/absence of KEGG Orthology groups). Genomic data integration in microbiome modeling is notoriously noisy and prone to overfitting, especially when sample sizes are restricted. Given how brittle models can be on this type of data, a deeper discussion is needed on whether the field would benefit more from data scaling and standardization before introducing increasingly complex neural architectures.
+
+3. **Clarity, Metrics, and Biological Terminology:** 
+   The paper would benefit from a more accessible presentation for readers crossing over from biological or medical backgrounds. Key concepts and terms (such as keystone bacteria) are introduced and discussed late in the text without upfront definitions. Furthermore, details regarding how $R^2$ is calculated across communities require hunting through the appendix. It would be helpful to explicitly explain what constitutes a strong versus acceptable $R^2$ baseline given the underlying biological complexity and dataset differences.
+
+4. **Simulation Insights and Recommendations:** 
+   While the simulation study provides helpful diagnostics, the conclusions and takeaways regarding data bottlenecks could be sharper. Given that data scarcity is highlighted as a primary challenge, the discussion should more directly advise the community on minimum data acquisition thresholds (along the axes of sample size, species diversity, and community sizes) to guide future data generation efforts before investing further in model complexity. 
+
+**Minor Questions & Suggestions:**
+- Can the authors clarify whether the lack of data was empirically proven to be the single biggest bottleneck compared to genomic noise or unmodeled environmental factors?
+- More explicit signposting in the main text regarding metric calculations (e.g., $R^2$ centering per community) would improve readability.","0.49449593095774413","49%","0.19827586206896552","20%","0.3484848484848485","35%","1.0268096514745308"

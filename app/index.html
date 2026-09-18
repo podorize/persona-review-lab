@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Persona Review Lab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Synthetic personas</p>
+        <h1>Persona Review Lab</h1>
+      </div>
+      <div class="header-actions">
+        <button id="loadSampleBtn" type="button">Carregar exemplo</button>
+        <button id="clearBtn" type="button" class="ghost">Limpar</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="band">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">1. Entradas</p>
+            <h2>Review real e contexto da persona</h2>
+          </div>
+          <span id="inputStatus" class="status">vazio</span>
+        </div>
+
+        <form id="generationForm" class="grid two">
+          <label class="span-two">
+            Review real
+            <textarea id="realReviewText" rows="9" placeholder="Cole aqui a review real coletada do OpenReview" required></textarea>
+          </label>
+          <label class="span-two">
+            PDF do paper
+            <input id="paperPdf" type="file" accept="application/pdf,.pdf">
+            <span id="pdfStatus" class="field-note">Nenhum PDF carregado.</span>
+          </label>
+          <label class="span-two">
+            Chave Gemini API
+            <input id="geminiApiKey" type="password" placeholder="Cole sua chave Gemini API localmente" autocomplete="off">
+            <span class="field-note">A chave fica apenas neste navegador e nao entra no CSV.</span>
+          </label>
+          <div class="form-actions span-two">
+            <button id="generateBtn" type="submit">Gerar respostas</button>
+            <span id="generationStatus" class="status">aguardando</span>
+          </div>
+        </form>
+      </section>
+
+      <section class="band">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">2. Prompts</p>
+            <h2>Prompts dos quatro níveis</h2>
+          </div>
+          <button id="resetPromptsBtn" type="button" class="ghost">Restaurar prompts</button>
+        </div>
+
+        <div class="persona-grid">
+          <label>
+            Prompt L1 - Persona genérica
+            <textarea id="level1Prompt" rows="18"></textarea>
+          </label>
+          <label>
+            Prompt L2 - Persona especialista no domínio
+            <textarea id="level2Prompt" rows="18"></textarea>
+          </label>
+          <label>
+            Prompt L3 - Persona calibrada por julgamento
+            <textarea id="level3Prompt" rows="18"></textarea>
+          </label>
+          <label>
+            Prompt L4 - Com review real
+            <textarea id="level4Prompt" rows="18"></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">3. Respostas geradas</p>
+            <h2>Quatro níveis de persona</h2>
+          </div>
+        </div>
+
+        <div class="persona-grid">
+          <label>
+            L1 - Persona genérica
+            <textarea id="level1Output" rows="18" placeholder="Resposta gerada para o nível 1" readonly></textarea>
+          </label>
+          <label>
+            L2 - Persona especialista no domínio
+            <textarea id="level2Output" rows="18" placeholder="Resposta gerada para o nível 2" readonly></textarea>
+          </label>
+          <label>
+            L3 - Persona calibrada por julgamento
+            <textarea id="level3Output" rows="18" placeholder="Resposta gerada para o nível 3" readonly></textarea>
+          </label>
+          <label>
+            L4 - Com review real
+            <textarea id="level4Output" rows="18" placeholder="Resposta gerada para o nível 4" readonly></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">4. Análise</p>
+            <h2>Similaridade com a review real</h2>
+          </div>
+          <button id="exportCsvBtn" type="button" class="ghost">Exportar CSV</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nível</th>
+                <th>Cosseno</th>
+                <th>Jaccard</th>
+                <th>Cobertura</th>
+                <th>Razão tamanho</th>
+              </tr>
+            </thead>
+            <tbody id="analysisRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="sample-pdf.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

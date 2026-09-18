@@ -1,0 +1,13 @@
+.DS_Store
+Thumbs.db
+
+# Local secrets
+.env
+.env.*
+config.local.js
+secrets/
+
+# Temporary files
+tmp/
+*.log
+__pycache__/
