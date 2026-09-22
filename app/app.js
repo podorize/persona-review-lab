@@ -4,7 +4,7 @@ const apiKeyStorageKey = "persona-review-lab-gemini-api-key";
 const currentPromptVersion = 6;
 const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const GEMINI_RETRY_DELAYS_MS = [3000, 8000, 15000];
-const registeredApiKey = localStorage.getItem(apiKeyStorageKey) || "";
+let registeredApiKey = localStorage.getItem(apiKeyStorageKey) || "";
 const SAMPLE_PDF_FILE_NAME = "9504_Modelling_Microbial_Commu.pdf";
 const SAMPLE_REAL_REVIEW = `The paper looks at modeling bacterial communities and their interactions using graph neural networks (GNNs). They rely on two open datasets, total n = 552 samples. The authors have downloaded genomes for the bacteria that was converted to growth encodings. To address the issue with limited data the authors also used a simulator based on the Lotka-Volterra model. They compare three different models, MLP as the standard, GNNs and MPGNN. Using GNN/MPGNN the authors were able to model but the models were sensitive to variations and generalizing to larger systems was poor. Models were better than MLP but only marginally.
 
@@ -220,6 +220,66 @@ function saveState() {
 
 function getGeminiApiKey() {
   return registeredApiKey.trim();
+}
+
+function requestRegisteredKey() {
+  return new Promise((resolve) => {
+    if (getGeminiApiKey()) {
+      resolve(true);
+      return;
+    }
+
+    const dialog = document.createElement("dialog");
+    dialog.className = "credential-dialog";
+    dialog.innerHTML = `
+      <form class="credential-panel">
+        <label>
+          Credencial cadastrada
+          <input id="credentialInput" type="password" autocomplete="off" required>
+        </label>
+        <div class="dialog-actions">
+          <button type="button" class="ghost" data-action="cancel">Cancelar</button>
+          <button type="submit">Salvar</button>
+        </div>
+      </form>
+    `;
+
+    const form = dialog.querySelector("form");
+    const input = dialog.querySelector("#credentialInput");
+    const cancelButton = dialog.querySelector("[data-action='cancel']");
+
+    const finish = (ready) => {
+      dialog.remove();
+      resolve(ready);
+    };
+
+    form.addEventListener("submit", (submitEvent) => {
+      submitEvent.preventDefault();
+      const value = (input.value || "").trim();
+
+      if (value) {
+        registeredApiKey = value;
+        localStorage.setItem(apiKeyStorageKey, value);
+        finish(true);
+        return;
+      }
+
+      input.focus();
+    });
+
+    cancelButton.addEventListener("click", () => {
+      finish(false);
+    });
+
+    dialog.addEventListener("cancel", (cancelEvent) => {
+      cancelEvent.preventDefault();
+      finish(false);
+    });
+
+    document.body.appendChild(dialog);
+    dialog.showModal();
+    input.focus();
+  });
 }
 
 function normalizeText(text) {
@@ -569,6 +629,12 @@ function persistFromInputs() {
 els.form.addEventListener("submit", async (event) => {
   event.preventDefault();
   persistFromInputs();
+
+  const keyReady = await requestRegisteredKey();
+  if (!keyReady) {
+    setStatus("");
+    return;
+  }
 
   if (!pdfBase64) {
     setStatus("pdf ausente");

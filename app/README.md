@@ -15,7 +15,7 @@ Abra `index.html` no navegador. Use `Carregar exemplo` para preencher automatica
 5. Veja as metricas de similaridade textual de cada nivel contra a review real.
 6. Exporte o lab em CSV para registrar prompts, respostas e metricas.
 
-O modelo de geracao usa sempre a chave ja cadastrada no navegador.
+O modelo de geracao usa sempre a credencial ja cadastrada no navegador. Cada navegador mantem sua propria configuracao local.
 
 ## Metricas
 

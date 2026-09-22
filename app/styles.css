@@ -121,6 +121,30 @@ main {
   }
 }
 
+.credential-dialog {
+  width: min(420px, calc(100vw - 32px));
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 0;
+}
+
+.credential-dialog::backdrop {
+  background: rgba(21, 23, 26, 0.32);
+}
+
+.credential-panel {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 .grid {
   display: grid;
   gap: 16px;
