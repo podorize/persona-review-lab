@@ -25,7 +25,6 @@
             <p class="eyebrow">1. Entradas</p>
             <h2>Review real e contexto da persona</h2>
           </div>
-          <span id="inputStatus" class="status">vazio</span>
         </div>
 
         <form id="generationForm" class="grid two">
@@ -38,14 +37,9 @@
             <input id="paperPdf" type="file" accept="application/pdf,.pdf">
             <span id="pdfStatus" class="field-note">Nenhum PDF carregado.</span>
           </label>
-          <label class="span-two">
-            Chave Gemini API
-            <input id="geminiApiKey" type="password" placeholder="Cole sua chave Gemini API localmente" autocomplete="off">
-            <span class="field-note">A chave fica apenas neste navegador e nao entra no CSV.</span>
-          </label>
           <div class="form-actions span-two">
             <button id="generateBtn" type="submit">Gerar respostas</button>
-            <span id="generationStatus" class="status">aguardando</span>
+            <span id="generationStatus" class="loader" aria-live="polite" aria-label="Aguardando"></span>
           </div>
         </form>
       </section>
@@ -56,7 +50,6 @@
             <p class="eyebrow">2. Prompts</p>
             <h2>Prompts dos quatro níveis</h2>
           </div>
-          <button id="resetPromptsBtn" type="button" class="ghost">Restaurar prompts</button>
         </div>
 
         <div class="persona-grid">

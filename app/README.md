@@ -15,11 +15,7 @@ Abra `index.html` no navegador. Use `Carregar exemplo` para preencher automatica
 5. Veja as metricas de similaridade textual de cada nivel contra a review real.
 6. Exporte o lab em CSV para registrar prompts, respostas e metricas.
 
-Modelo usado: `gemini-3.5-flash-lite`, escolhido por ter free tier e ser mais leve para economizar cota.
-
-## Segurança da chave
-
-A chave Gemini API deve ser colada no campo da interface. Ela fica salva apenas no `localStorage` do navegador e nao e exportada no CSV. Para uso publico, o ideal seria substituir esse fluxo por um backend/proxy seguro.
+O modelo de geracao usa sempre a chave ja cadastrada no navegador.
 
 ## Metricas
 
@@ -32,7 +28,7 @@ Essas metricas sao diagnosticos lexicais de apoio. Elas nao substituem uma avali
 
 ## Exportacao CSV
 
-O botao `Exportar CSV` gera um arquivo com uma linha por nivel. O arquivo inclui nome do PDF, modelo usado, review real, prompt configurado, prompt completo enviado ao modelo, review gerada e metricas. A chave da API nao e exportada.
+O botao `Exportar CSV` gera um arquivo com uma linha por nivel. O arquivo inclui nome do PDF, modelo usado, review real, prompt configurado, prompt completo enviado ao modelo, review gerada e metricas.
 
 ## Prompts e respostas
 

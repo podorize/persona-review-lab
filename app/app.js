@@ -4,6 +4,7 @@ const apiKeyStorageKey = "persona-review-lab-gemini-api-key";
 const currentPromptVersion = 6;
 const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const GEMINI_RETRY_DELAYS_MS = [3000, 8000, 15000];
+const registeredApiKey = localStorage.getItem(apiKeyStorageKey) || "";
 const SAMPLE_PDF_FILE_NAME = "9504_Modelling_Microbial_Commu.pdf";
 const SAMPLE_REAL_REVIEW = `The paper looks at modeling bacterial communities and their interactions using graph neural networks (GNNs). They rely on two open datasets, total n = 552 samples. The authors have downloaded genomes for the bacteria that was converted to growth encodings. To address the issue with limited data the authors also used a simulator based on the Lotka-Volterra model. They compare three different models, MLP as the standard, GNNs and MPGNN. Using GNN/MPGNN the authors were able to model but the models were sensitive to variations and generalizing to larger systems was poor. Models were better than MLP but only marginally.
 
@@ -100,11 +101,8 @@ const els = {
   realReviewText: document.querySelector("#realReviewText"),
   paperPdf: document.querySelector("#paperPdf"),
   pdfStatus: document.querySelector("#pdfStatus"),
-  geminiApiKey: document.querySelector("#geminiApiKey"),
-  inputStatus: document.querySelector("#inputStatus"),
   generationStatus: document.querySelector("#generationStatus"),
   generateBtn: document.querySelector("#generateBtn"),
-  resetPromptsBtn: document.querySelector("#resetPromptsBtn"),
   level1Prompt: document.querySelector("#level1Prompt"),
   level2Prompt: document.querySelector("#level2Prompt"),
   level3Prompt: document.querySelector("#level3Prompt"),
@@ -221,11 +219,7 @@ function saveState() {
 }
 
 function getGeminiApiKey() {
-  return (els.geminiApiKey.value || "").trim();
-}
-
-function saveApiKey() {
-  localStorage.setItem(apiKeyStorageKey, getGeminiApiKey());
+  return registeredApiKey.trim();
 }
 
 function normalizeText(text) {
@@ -371,7 +365,7 @@ function wait(ms) {
 async function generateWithGeminiModel(modelName, prompt) {
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
-    throw new Error("Informe a chave Gemini API antes de gerar respostas.");
+    throw new Error("Nenhuma chave cadastrada.");
   }
 
   const response = await fetch(
@@ -416,7 +410,7 @@ async function generateWithGeminiModel(modelName, prompt) {
     .trim();
 
   if (!text) {
-    throw new Error("A API não retornou texto.");
+    throw new Error("O serviço não retornou texto.");
   }
 
   return text;
@@ -448,7 +442,6 @@ async function generateWithGemini(prompt) {
 
 function render() {
   els.realReviewText.value = state.realReview;
-  els.geminiApiKey.value = localStorage.getItem(apiKeyStorageKey) || "";
   els.level1Prompt.value = state.prompts.level1;
   els.level2Prompt.value = state.prompts.level2;
   els.level3Prompt.value = state.prompts.level3;
@@ -458,8 +451,6 @@ function render() {
   els.level3Output.value = state.outputs.level3;
   els.level4Output.value = state.outputs.level4;
 
-  const ready = state.realReview.trim() && pdfBase64;
-  els.inputStatus.textContent = ready ? "pronto" : "vazio";
   els.pdfStatus.textContent = pdfBase64
     ? `PDF carregado: ${state.pdfFileName || "arquivo selecionado"}`
     : "Nenhum PDF carregado.";
@@ -560,7 +551,10 @@ function exportCsv() {
 }
 
 function setStatus(text) {
-  els.generationStatus.textContent = text;
+  const loading = /gerando|tentando|alta demanda|lendo pdf/i.test(text);
+  els.generationStatus.textContent = "";
+  els.generationStatus.setAttribute("aria-label", text || "Aguardando");
+  els.generationStatus.classList.toggle("is-active", loading);
 }
 
 function persistFromInputs() {
@@ -569,7 +563,6 @@ function persistFromInputs() {
   state.prompts.level2 = els.level2Prompt.value;
   state.prompts.level3 = els.level3Prompt.value;
   state.prompts.level4 = els.level4Prompt.value;
-  saveApiKey();
   saveState();
 }
 
@@ -593,7 +586,7 @@ els.form.addEventListener("submit", async (event) => {
       saveState();
       render();
     }
-    setStatus("concluído");
+    setStatus("");
   } catch (error) {
     setStatus("erro");
     window.alert(`Erro ao gerar resposta: ${error.message || "Erro desconhecido"}`);
@@ -604,7 +597,6 @@ els.form.addEventListener("submit", async (event) => {
 
 [
   els.realReviewText,
-  els.geminiApiKey,
   els.level1Prompt,
   els.level2Prompt,
   els.level3Prompt,
@@ -614,14 +606,6 @@ els.form.addEventListener("submit", async (event) => {
     persistFromInputs();
     render();
   });
-});
-
-els.resetPromptsBtn.addEventListener("click", () => {
-  state.prompts = structuredClone(defaultPrompts);
-  state.outputs = structuredClone(emptyState.outputs);
-  saveState();
-  render();
-  setStatus("prompts restaurados");
 });
 
 els.paperPdf.addEventListener("change", async () => {
